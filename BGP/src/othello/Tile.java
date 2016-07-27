@@ -105,13 +105,13 @@ public class Tile extends JPanel implements ActionListener {
 		
 		
 		if (!enable){
-			System.out.println("ÇÃ·¹ÀÌ¾î "+ turn + enable);
+			System.out.println("í”Œë ˆì´ì–´ "+ turn + enable);
 			return;
 		}
 		
 		gameWLD();		
 		
-		System.out.println("³­ ÇÃ·¹ÀÌ¾î "+ turn + "ÀÔ´Ï´Ù.");
+		System.out.println("ë‚œ í”Œë ˆì´ì–´ "+ turn + "ì…ë‹ˆë‹¤.");
 
 		if (!g.allPlaceCheck(turn))
 			pw.println("[ENDTN]");
@@ -130,13 +130,13 @@ public class Tile extends JPanel implements ActionListener {
 				} else if (e.getSource() == btn[i][j] && g.getgameMap(i, j) != 0){
 					return;
 				}
-					//System.out.println("¼±ÅÃ¿À·ù");
+					//System.out.println("ì„ íƒì˜¤ë¥˜");
 			}
 		}
 		
 		reverseStone();
-		System.out.println("Player"+ turn + "ÅÏ ³¡");		
-		//Èæµ¹Turn ÀÌ¹ÌÁö ¹Ù²Ù±â  ¿©±â³ÖÀ»¿¹Á¤		
+		System.out.println("Player"+ turn + "í„´ ë");		
+		//í‘ëŒTurn ì´ë¯¸ì§€ ë°”ê¾¸ê¸°  ì—¬ê¸°ë„£ì„ì˜ˆì •		
 		enable=false;
 		pw.println("[ENDTN]");
 		

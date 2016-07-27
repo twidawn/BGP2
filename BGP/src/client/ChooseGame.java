@@ -5,7 +5,7 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 /*
- * °£´ÜÇÑ °ÔÀÓ ¼±ÅÃ Ã¢
+ * ê°„ë‹¨í•œ ê²Œì„ ì„ íƒ ì°½
  */
 public class ChooseGame extends JFrame{
 	JButton othello, omok;
@@ -13,8 +13,8 @@ public class ChooseGame extends JFrame{
 	public ChooseGame(){
 		setLayout(new FlowLayout());
 		
-		othello = new JButton("¿À¼¿·Î");
-		omok = new JButton("¿À¸ñ");
+		othello = new JButton("ì˜¤ì…€ë¡œ");
+		omok = new JButton("ì˜¤ëª©");
 		
 		add(omok);
 		add(othello);

@@ -72,8 +72,8 @@ public class Client extends JFrame implements ActionListener, Runnable {
 		// @@
 		sr.createRoom.addActionListener(this);
 		sr.enterRoom.addActionListener(this);
-		dg.b1.addActionListener(this);
-		dg.gc.addActionListener(this);
+		dg.start.addActionListener(this);
+		dg.gamesel.addActionListener(this);
 		mr.makeRoom.addActionListener(this);
 
 		mgp.send.addActionListener(this);
@@ -95,43 +95,44 @@ public class Client extends JFrame implements ActionListener, Runnable {
 		try {
 			while ((msg = reader.readLine()) != null) {
 				// System.out.println(msg);
-				if (msg.startsWith("[MKROOM]")) { // πÊª˝º∫
+				if (msg.startsWith("[MKROOM]")) { // Î∞©ÏÉùÏÑ±
 					String temp = msg.substring(8);
 					String roomName = temp.substring(0, temp.indexOf(" "));
 					String numOfPlayer = temp.substring(temp.indexOf(" ") + 1);
 					String[] a = { roomName, numOfPlayer };
 					sr.model.addRow(a);
-				} else if (msg.startsWith("[RMROOM]")) { // πÊ¡¶∞≈
+				} else if (msg.startsWith("[RMROOM]")) { // Î∞©Ï†úÍ±∞
 					String temp = msg.substring(8);
 					System.out.println(temp);
 					for (int i = 0; i < sr.model.getRowCount(); i++) {
 						if (sr.model.getValueAt(i, 0).equals(temp))
 							sr.model.removeRow(i);
 					}
-				} else if (msg.startsWith("[JOINR]")) { // πÊ¬¸∞°
+				} else if (msg.startsWith("[JOINR]")) { // Î∞©Ï∞∏Í∞Ä
 					String temp = msg.substring(7);
 					writer.println("[CHECKF]" + sr.table.getSelectedRow());
 					card.show(getContentPane(), "DICE");
 					sizeChange(1000, 850);
 				} else if (msg.equals("[FULLR]")) {
-					JOptionPane.showMessageDialog(this, "πÊ¿Ã ¥Ÿ √°Ω¿¥œ¥Ÿ.");
+					JOptionPane.showMessageDialog(this, "Î∞©Ïù¥ Îã§ Ï∞ºÏäµÎãàÎã§.");
 				} else if (msg.startsWith("[CHECKF]")) {
 					sr.model.setValueAt("2", Integer.parseInt(msg.substring(8)), 1);
 				} else if (msg.equals("[LEAVE]")) {
+					dg.gamesel.setVisible(false);
 					card.show(getContentPane(), "SERIV");
 					sizeChange(415, 420);
 					writer.println("[LEAVE]");
 				} else if (msg.equals("[GODICE]")) {
-					dg.b1.setVisible(true);
-				} else if (msg.startsWith("[SETDC]")) { // ªÛ¥ÎπÊ¿« ¡÷ªÁ¿ß ºº∆√
-					dg.la5.setIcon(dg.icon[Integer.parseInt(msg.substring(7)) - 1]);
-				} else if (msg.startsWith("[UDICE]")) { // ≥ª ¡÷ªÁ¿ß ºº∆√
-					dg.la4.setIcon(dg.icon[Integer.parseInt(msg.substring(7)) - 1]);
+					dg.start.setVisible(true);
+				} else if (msg.startsWith("[SETDC]")) { // ÏÉÅÎåÄÎ∞©Ïùò Ï£ºÏÇ¨ÏúÑ ÏÑ∏ÌåÖ
+					dg.movedice2.setIcon(dg.icon[Integer.parseInt(msg.substring(7)) - 1]);
+				} else if (msg.startsWith("[UDICE]")) { // ÎÇ¥ Ï£ºÏÇ¨ÏúÑ ÏÑ∏ÌåÖ
+					dg.movedice1.setIcon(dg.icon[Integer.parseInt(msg.substring(7)) - 1]);
 				} else if (msg.startsWith("[DICEW]")) {
 					playerColor = 1;
 					mgp.tile.turn = 1;
 					mgp.tile.setenable(true);
-					dg.gc.setVisible(true);
+					dg.gamesel.setVisible(true);
 				} else if (msg.startsWith("[DICEL]")) {
 					playerColor = 2;
 					mgp.tile.turn = 2;
@@ -160,15 +161,18 @@ public class Client extends JFrame implements ActionListener, Runnable {
 				} else if (msg.startsWith("[WHITE]")) {
 					mgp.turnImage.setIcon(new ImageIcon("image\\white.png"));
 				} else if (msg.equals("[MYWIN]")) {
-					rg.lose.setText("ππ?");
+					rg.setTitle("Player" + playerColor);
+					rg.lose.setText("Î≠ê?");
 					rg.sizeChange(300, 300);
 					rg.setVisible(true);
 				} else if (msg.equals("[MYLOS]")) {
-					rg.lose.setText("∆–πË!");
+					rg.setTitle("Player" + playerColor);
+					rg.lose.setText("Ìå®Î∞∞!");
 					rg.sizeChange(300, 300);
 					rg.setVisible(true);
 				} else if (msg.equals("[GDRAW]")) {
-					rg.lose.setText("∫Ò±Ë");
+					rg.setTitle("Player" + playerColor);
+					rg.lose.setText("ÎπÑÍπÄ");
 					rg.sizeChange(300, 300);
 					rg.setVisible(true);
 				}
@@ -176,7 +180,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Ω««‡∫Œø°º≠ ø°∑Ø" + e.getMessage());
+			System.out.println("Ïã§ÌñâÎ∂ÄÏóêÏÑú ÏóêÎü¨" + e.getMessage());
 		}
 
 	}
@@ -187,14 +191,14 @@ public class Client extends JFrame implements ActionListener, Runnable {
 
 	private void connect() {
 		try {
-			System.out.println("ø¨∞·Ω√µµ");
+			System.out.println("Ïó∞Í≤∞ÏãúÎèÑ");
 			socket = new Socket("127.0.0.1", 9999);
-			System.out.println("ø¨∞·º∫∞¯");
+			System.out.println("Ïó∞Í≤∞ÏÑ±Í≥µ");
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			writer = new PrintWriter(socket.getOutputStream(), true);
 			new Thread(this).start();
 		} catch (Exception e) {
-			System.out.println("≈¨∂Û ƒ¡≥ÿ∫Œ∫– ¿Õº¡º«" + e.getMessage());
+			System.out.println("ÌÅ¥Îùº Ïª®ÎÑ•Î∂ÄÎ∂Ñ ÏùµÏÖâÏÖò" + e.getMessage());
 		}
 	}
 
@@ -202,16 +206,17 @@ public class Client extends JFrame implements ActionListener, Runnable {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if (socket == null) {
-			System.out.println("º≠πˆø¨∞·ø° Ω«∆–«œø¥Ω¿¥œ¥Ÿ.");
+			System.out.println("ÏÑúÎ≤ÑÏó∞Í≤∞Ïóê Ïã§Ìå®ÌïòÏòÄÏäµÎãàÎã§.");
 			return;
 		}
 
 		if (e.getSource() == lp.twitter) {
 			writer.println("[TWITT]");
 		} else if (e.getSource() == lp.guest) {
-			System.out.println("∞‘Ω∫∆Æ πˆ∆∞ ¥≠∏≤");
-
-			// @@¥Î±‚Ω«µÈæÓ∞°±‚@@
+			System.out.println("Í≤åÏä§Ìä∏ Î≤ÑÌäº ÎàåÎ¶º");
+			if(sr.table.getRowCount()==0)
+				writer.println("[ROOMINDEX]");
+			// @@ÎåÄÍ∏∞Ïã§Îì§Ïñ¥Í∞ÄÍ∏∞@@
 			card.show(getContentPane(), "SERIV");
 			sizeChange(415, 420);
 			// setSize(415, 420);
@@ -221,67 +226,76 @@ public class Client extends JFrame implements ActionListener, Runnable {
 			// sizeChange(400, 400);
 		} else if (e.getSource() == sr.createRoom) {
 			mr.sizeChange(250, 150);
-			mr.rn.setText("");
+			mr.roonname.setText("");
 			mr.setVisible(true);
 		} else if (e.getSource() == mr.makeRoom) {
 			String temp = "";
-			String rname = mr.rn.getText().trim();
+			String rname = mr.roonname.getText().trim();
 			if (rname.length() < 1) {
-				JOptionPane.showMessageDialog(this, "πÊ¿Ã∏ß¿ª ¿‘∑¬«œººø‰");
-				mr.rn.requestFocus();
+				JOptionPane.showMessageDialog(this, "Î∞©Ïù¥Î¶ÑÏùÑ ÏûÖÎ†•ÌïòÏÑ∏Ïöî");
+				mr.roonname.requestFocus();
 				return;
 			}
-			// ¡ﬂ∫ππÊ √º≈©
+			// Ï§ëÎ≥µÎ∞© Ï≤¥ÌÅ¨
 			for (int i = 0; i < sr.model.getRowCount(); i++) {
 				temp = sr.model.getValueAt(i, 0).toString();
 				if (rname.equals(temp)) {
-					JOptionPane.showMessageDialog(this, "¡ﬂ∫πµ» πÊ¿Ã∏ß¿‘¥œ¥Ÿ");
-					mr.rn.setText("");
+					JOptionPane.showMessageDialog(this, "Ï§ëÎ≥µÎêú Î∞©Ïù¥Î¶ÑÏûÖÎãàÎã§");
+					mr.roonname.setText("");
 					return;
 				}
-			} // ø©±‚º≠ forπÆ ≥° and πÊ∏∏µÂ¥¬µ• º∫∞¯«ﬂ¿ªΩ√
-				// ∏∏µÁ πÊ µÓ∑œ
+			} // Ïó¨Í∏∞ÏÑú forÎ¨∏ ÎÅù and Î∞©ÎßåÎìúÎäîÎç∞ ÏÑ±Í≥µÌñàÏùÑÏãú
+				// ÎßåÎì† Î∞© Îì±Î°ù
 			String numOfPlayer = "1";
 			writer.println("[MKROOM]" + rname + " " + numOfPlayer);
 
 			// String[] a = { rname, numOfPlayer};
 
 			// sr.model.addRow(a);
-			// ¥Ÿ¿ÃΩ∫»≠∏È¿∏∑Œ≥—±‚±‚
+			// Îã§Ïù¥Ïä§ÌôîÎ©¥ÏúºÎ°úÎÑòÍ∏∞Í∏∞
 			card.show(getContentPane(), "DICE");
-			dg.b1.setVisible(false);
+			dg.start.setVisible(false);
 			sizeChange(1000, 850);
 			mr.setVisible(false);
 
-		} else if (e.getSource() == sr.enterRoom) {// πÊ¬¸∞°
+		} else if (e.getSource() == sr.enterRoom) {// Î∞©Ï∞∏Í∞Ä
 			if (sr.table.getSelectedRow() != -1)
 				writer.println("[JOINR]" + sr.model.getValueAt(sr.table.getSelectedRow(), 0));
 		}
 		// 07.26
 		// }else if(e.getSource()==ma.start){
-		else if (e.getSource() == dg.gc) {
+		else if (e.getSource() == dg.gamesel) {
 			cg.setVisible(true);
 			cg.setResizable(false);
 			cg.setBounds(300, 300, 170, 70);
-			System.out.println("Ω√¿€πˆ∆∞ ¥≠∏≤");
+			System.out.println("ÏãúÏûëÎ≤ÑÌäº ÎàåÎ¶º");
 		} else if (e.getSource() == cg.othello) {
-			System.out.println("≥ª∞° πˆ∆∞¿ª ¥≠∑∂¡ˆ");
+			System.out.println("ÎÇ¥Í∞Ä Î≤ÑÌäºÏùÑ ÎàåÎ†ÄÏßÄ");
 			// mgp.tile.setenable(true);
 			writer.println("[GOTHE]");
 
 			cg.setVisible(false);
 		} else if (e.getSource() == cg.omok) {
 			cg.setVisible(false);
-			System.out.println("ø¿∏Òπˆ∆∞ ¥≠∏≤");
-		} else if (e.getSource() == dg.b1) {
-			dg.b1.setVisible(false);
+			System.out.println("Ïò§Î™©Î≤ÑÌäº ÎàåÎ¶º");
+		} else if (e.getSource() == dg.start) {
+			dg.start.setVisible(false);
 			writer.println("[CASTD]");
 		} else if (e.getSource() == mgp.send) {
-			System.out.println("∏ﬁΩ√¡ˆ ¿¸º€ πˆ∆∞");
+			System.out.println("Î©îÏãúÏßÄ Ï†ÑÏÜ° Î≤ÑÌäº");
 		} else if (e.getSource() == rg.regame){
-			System.out.println("Ω√∑∑");
+			System.out.println("ÏãúÎ†Å");
+			// Îã§Ïãú Ï£ºÏÇ¨ÏúÑÌôîÎ©¥ÏúºÎ°ú 07.27
+			card.show(getContentPane(), "DICE");
+			dg.start.setVisible(false);
+			sizeChange(1000, 850);
+			
 		}else if (e.getSource() == rg.out){
-			System.out.println("∞Ì∑ØƒÀ æ»µ≈¡ˆ");
+			System.out.println("Í≥†Îü¨ÏºÑ ÏïàÎèºÏßÄ");
+			System.exit(1); //Í∞ïÏ†úÏ¢ÖÎ£å
+		/*	   or  ÎåÄÍ∏∞Ïã§
+			card.show(getContentPane(), "SERIV");
+			sizeChange(415, 420);*/
 		}
 
 	}

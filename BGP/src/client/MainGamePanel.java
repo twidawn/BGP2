@@ -44,7 +44,7 @@ public class MainGamePanel extends JPanel {
 
 		sendMsg = new JTextField();
 		sendMsg.setBounds(0, 510, 250, 35);
-		send = new JButton("Àü ¼Û");
+		send = new JButton("ì „ ì†¡");
 		send.setBounds(260, 510, 85, 35);
 
 		megPanel.add(scrollPane);
@@ -55,7 +55,7 @@ public class MainGamePanel extends JPanel {
 
 		setSize(1300, 1000);
 
-		turnImage = new JLabel(new ImageIcon("image\\black.png"));// ¿©±â¿ä
+		turnImage = new JLabel(new ImageIcon("image\\black.png"));
 		turnNotice = new JLabel("Turn");
 		turnNotice.setFont(font1);
 

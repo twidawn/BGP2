@@ -8,27 +8,28 @@ public class Server {
 	public static int playerCount = 0;
 	public static int mat=0;
 	private ResourceManager rm;
+	private RoomList rl;
 	private ControlServer cs;
-	private ServerSocket server; // ¼­¹ö¼ÒÄÏ
-	private Socket soc; // ¿¬°á¼ÒÄÏ
+	private ServerSocket server; // ì„œë²„ì†Œì¼“
+	private Socket soc; // ì—°ê²°ì†Œì¼“
 	private int Port = 9999;
-	
 	
 	public Server(){
 		
 		rm = new ResourceManager();
+		rl = new RoomList();
 	}
 	
 	public void startServer(){
 		try {
 			server = new ServerSocket(Port);
-			System.out.println("¼­¹ö ¼ÒÄÏ»ı¼º");
+			System.out.println("ì„œë²„ ì†Œì¼“ìƒì„±");
 			while(true){
 				Socket socket = server.accept();
-				cs = new ControlServer(socket, server, rm);
-				System.out.println("ÄÁÆ®·Ñ ¼­¹ö ½ÃÀÛ");	
+				cs = new ControlServer(socket, server, rm, rl);
+				System.out.println("ì»¨íŠ¸ë¡¤ ì„œë²„ ì‹œì‘");	
 				cs.start();
-				System.out.println("¸®¼Ò½º ¸Å´ÏÀú ½ÃÀÛ");
+				System.out.println("ë¦¬ì†ŒìŠ¤ ë§¤ë‹ˆì € ì‹œì‘");
 				rm.add(cs);
 			}
 			

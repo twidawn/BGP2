@@ -9,10 +9,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /*
- * ¹æ¸¸µé±â
- * ¹Ì±¸Çö
- * Á¢¼Ó½Ã ¸¸µé¾îÁ® ÀÖ´Â ¹æÀÇ ¸ñ·ÏÀ» º¸¿©ÁÖ°í
- * Âü¿©ÇÒ °ÍÀÎ°¡, ÀÚ½ÅÀÇ Á÷Á¢ ¹æÀ» ¸¸µé °ÍÀÎ°¡¸¦ ³ªÅ¸³»ÁÖ´Â ÆĞ³Î
+ * ë°©ë§Œë“¤ê¸°
+ * ë¯¸êµ¬í˜„
+ * ì ‘ì†ì‹œ ë§Œë“¤ì–´ì ¸ ìˆëŠ” ë°©ì˜ ëª©ë¡ì„ ë³´ì—¬ì£¼ê³ 
+ * ì°¸ì—¬í•  ê²ƒì¸ê°€, ìì‹ ì˜ ì§ì ‘ ë°©ì„ ë§Œë“¤ ê²ƒì¸ê°€ë¥¼ ë‚˜íƒ€ë‚´ì£¼ëŠ” íŒ¨ë„
  */
 public class SelectRival extends JPanel {
 	JButton createRoom, enterRoom;
@@ -23,10 +23,10 @@ public class SelectRival extends JPanel {
 		setLayout(null);
 
 		String[][] row = new String[0][2];
-		String[] col = { "¹æÀÌ¸§", "ÀÎ¿ø" };
+		String[] col = { "ë°©ì´ë¦„", "ì¸ì›" };
 
-		createRoom = new JButton("¹æ¸¸µé±â");
-		enterRoom = new JButton("Âü¿©ÇÏ±â");
+		createRoom = new JButton("ë°©ë§Œë“¤ê¸°");
+		enterRoom = new JButton("ì°¸ì—¬í•˜ê¸°");
 
 		model = new DefaultTableModel(row, col);
 		table = new JTable(model) {

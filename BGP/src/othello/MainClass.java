@@ -14,7 +14,6 @@ public class MainClass{
 		gc = new GameControl();
 		gc.gameStatus();
 	}
-
 	
 	public static void main(String[] args) {
 		MainClass mc = new MainClass();	

@@ -16,6 +16,7 @@ public class ControlServer extends Thread {
 	private Socket socket;
 	private ServerSocket sc;
 	private ResourceManager rm;
+	private RoomList rl;
 	private boolean ready = false;
 	private boolean dice = false;
 	private int diceNum=0;
@@ -23,11 +24,12 @@ public class ControlServer extends Thread {
 	private BufferedReader reader;
 	private PrintWriter writer;
 
-	public ControlServer(Socket socket, ServerSocket sc, ResourceManager rm) {
+	public ControlServer(Socket socket, ServerSocket sc, ResourceManager rm, RoomList rl) {
 		// TODO Auto-generated constructor stub
 		this.socket = socket;
 		this.rm = rm;
 		this.sc = sc;
+		this.rl = rl;
 	}
 	
 	Socket getSocket(){
@@ -60,18 +62,23 @@ public class ControlServer extends Thread {
 
 			while ((msg = reader.readLine()) != null) {
 				
-				if(msg.equals("[GUEST]")){//°Ô½ºÆ® ·Î±×ÀÎ
+				if(msg.equals("[GUEST]")){//ê²ŒìŠ¤íŠ¸ ë¡œê·¸ì¸
 					userName = "GUEST" + Integer.toString(++Server.playerCount);
-				} else if(msg.equals("[TWITT]")){//Æ®À§ÅÍ ·Î±×ÀÎ ¹öÆ° ´©¸§
-					System.out.println("Æ®À§ÅÍ ¹öÆ° ´­¸²");
-				} else if(msg.startsWith("[MKROOM]")){//¹æ¸¸µë
+				} else if(msg.equals("[TWITT]")){//íŠ¸ìœ„í„° ë¡œê·¸ì¸ ë²„íŠ¼ ëˆ„ë¦„
+					System.out.println("íŠ¸ìœ„í„° ë²„íŠ¼ ëˆŒë¦¼");
+				} else if(msg.equals("[ROOMINDEX]")){ //07.27 ë°©ì •ë³´ë¥¼ ë¶ˆëŸ¬ì˜´
+					rl.writeRoom(writer);
+				} else if(msg.startsWith("[MKROOM]")){//ë°©ë§Œë“¬
 					String temp = msg.substring(8);
 					roomName = temp.substring(0, temp.indexOf(" "));
+					String[] roomList = {roomName, "1"};
+					rl.add(roomList);
 					rm.allNotice(msg);
 				} else if(msg.startsWith("[JOINR]")){
 					String temp = msg.substring(7);
 					roomName =temp;
 					if(rm.roomCheck(temp)){
+						rl.changeNumber(roomName, "2");
 						writer.println("[JOINR]" + temp);
 						rm.roomNotice(this, "[GODICE]");
 					}else{
@@ -80,11 +87,11 @@ public class ControlServer extends Thread {
 					}
 				}else if(msg.startsWith("[CHECKF]")){
 					rm.allNotice(msg);
-				}else if(msg.startsWith("[CASTD]")){ //ÁÖ»çÀ§ ´øÁü
+				}else if(msg.startsWith("[CASTD]")){ //ì£¼ì‚¬ìœ„ ë˜ì§
 					dice = true;
 					diceNum = (int)(Math.random()*6)+1;
 					writer.println("[UDICE]" + diceNum);
-					rm.roomMsg(this, "[SETDC]"+diceNum);// »ó´ë¹æ¿¡°Ô ÁÖ»çÀ§¸¦ ¼¼ÆÃÇÒ°ÍÀ» ¸íÇÔ
+					rm.roomMsg(this, "[SETDC]"+diceNum);// ìƒëŒ€ë°©ì—ê²Œ ì£¼ì‚¬ìœ„ë¥¼ ì„¸íŒ…í• ê²ƒì„ ëª…í•¨
 					if(rm.checkDice(roomName)){
 						if(rm.diceResult(this, diceNum)==1){
 							writer.println("[DICEW]");
@@ -93,10 +100,10 @@ public class ControlServer extends Thread {
 							rm.roomMsg(this, "[DICEW]");
 							writer.println("[DICEL]");
 						}else if(rm.diceResult(this, diceNum)==3){
-							rm.roomNotice(this, "[GODICE]"); //´Ù½Ã ÁÖ»çÀ§ ´øÁü
+							rm.roomNotice(this, "[GODICE]"); //ë‹¤ì‹œ ì£¼ì‚¬ìœ„ ë˜ì§
 						}
 					}
-				}else if(msg.startsWith("[GOTHE]")){ //¿À¼¿·Î¸¦ ¼±ÅÃÇÔ
+				}else if(msg.startsWith("[GOTHE]")){ //ì˜¤ì…€ë¡œë¥¼ ì„ íƒí•¨
 					rm.roomNotice(this, "[GOTHE]");
 				}else if(msg.startsWith("[STONE]")){
 					rm.roomMsg(this, msg);
@@ -107,71 +114,34 @@ public class ControlServer extends Thread {
 				}else if( msg.equals("[BLACK]")){
 					rm.roomNotice(this, "[BLACK]");
 				}else if (msg.equals("[LEAVE]")){
+					dice = false;
+					rl.delectRoom(roomName);
 					rm.allNotice("[RMROOM]" + roomName);
 					roomName=null;
-				}else if (msg.equals("[MYWIN]")){ //³» ½Â¸®ÀÏ°æ¿ì ³ª¿¡°Õ ½ÂÀ» Àû¿¡°Õ ÆĞ¸¦ ¾Ë¸°´Ù.
+				}else if (msg.equals("[MYWIN]")){ //ë‚´ ìŠ¹ë¦¬ì¼ê²½ìš° ë‚˜ì—ê² ìŠ¹ì„ ì ì—ê² íŒ¨ë¥¼ ì•Œë¦°ë‹¤.
 					writer.println("[MYWIN]");
 					rm.roomMsg(this, "[MYLOS]");
-				}else if (msg.equals("[MYLOS]")){//³» ÆĞ¹èÀÏ°æ¿ì ³ª¿¡°Õ ÆĞ¸¦ Àû¿¡°Õ ½ÂÀ» ¾Ë¸°´Ù.
+				}else if (msg.equals("[MYLOS]")){//ë‚´ íŒ¨ë°°ì¼ê²½ìš° ë‚˜ì—ê² íŒ¨ë¥¼ ì ì—ê² ìŠ¹ì„ ì•Œë¦°ë‹¤.
 					writer.println("[MYLOS]");
 					rm.roomMsg(this, "[MYWIN]");
-				}else if (msg.equals("[GDRAW]")){ //ºñ±â¸é µÑ´Ù ºñ±ä°ÍÀÌ´Ù.
+				}else if (msg.equals("[GDRAW]")){ //ë¹„ê¸°ë©´ ë‘˜ë‹¤ ë¹„ê¸´ê²ƒì´ë‹¤.
 					rm.roomNotice(this, "[GDRAW]");
 				}
-				
-				
-/*
-				if (msg.startsWith("[GUEST]")) {
-					userName = "GUEST" + Integer.toString(++Server.playerCount);
-					
-					roomNumber=1;
-					if(rm.roomCheck(1)){
-						writer.println("[ROOM]");
-						userName = "GUEST" + Integer.toString(++Server.playerCount);
-						System.out.println(userName + "ÀÇ ÀÔÀå");
-						if(rm.gamerCheck(1)){
-							//rm.btnEnabled(this, "[BTNEN]"); µÎ¸í ´Ù¿¡°Ô ¹öÆ° È°¼ºÈ£
-							rm.sendMsg(this, "[BTNEN]"); //Ã¼Å©¿ë
-							System.out.println("Á¤»óÀÛµ¿");
-							////////////////////////////ÀÓ½Ã µ¹ »ö±ò °áÁ¤
-							rm.sendMsg(this, "[BLACK]");
-							writer.println("[WHITE]");														
-						}
-						else{
-							writer.println("[BTNRE]");
-							System.out.println("ºñÁ¤»ó");
-						}
-						
-					}else{
-						writer.println("[FULL]");
-						System.out.println("´õ ÀÌ»ó ¹æ¿¡ Á¢¼Ó ÇÒ ¼ö ¾ø½À´Ï´Ù.");
-					}
-					
-				}else if(msg.startsWith("[GOTHE]")){
-					rm.btnEnabled(this, "[GMSOS]");
-					writer.println("[BTURN]");
-					rm.sendMsg(this, "[WTURN]");
-				}else if(msg.startsWith("[GOMOK]")){
-					
-				}else if(msg.startsWith("[STONE]")){
-					rm.sendMsg(this, msg);
-				}else if(msg.startsWith("[ENDTN]")){
-					rm.sendMsg(this, "[YOURT]");
-				}
-*/
+
 			}
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			System.out.println("¿©±â´å");
+			System.out.println("ì—¬ê¸°ë‹·");
 		} finally {
 			try {
-				//System.out.println("¹æÁ¦¸ñ" + roomName);
-				//System.out.println(userName+ "ÅğÀå");
-				if(roomName != null && rm.roomCheck(this)){ //¹æÀÌ ºñ¾úÀ» °æ¿ì
+				//System.out.println("ë°©ì œëª©" + roomName);
+				//System.out.println(userName+ "í‡´ì¥");
+				if(roomName != null && rm.roomCheck(this)){ //ë°©ì´ ë¹„ì—ˆì„ ê²½ìš°
+					rl.delectRoom(roomName);
 					rm.allNotice("[RMROOM]" + roomName);
-				}else if(roomName != null && !rm.roomCheck(this)){//¹æ¿¡ »ç¶÷ÀÌ ³²¾ÆÀÖÀ» °æ¿ì
+				}else if(roomName != null && !rm.roomCheck(this)){//ë°©ì— ì‚¬ëŒì´ ë‚¨ì•„ìˆì„ ê²½ìš°
 					rm.roomMsg(this, "[LEAVE]");
 				}
 				rm.remove(this);
@@ -184,7 +154,7 @@ public class ControlServer extends Thread {
 				reader = null;
 				writer = null;
 				socket = null;
-				System.out.println("Á¢¼ÓÀÚ¼ö : " + rm.size());
+				System.out.println("ì ‘ì†ììˆ˜ : " + rm.size());
 			} catch (Exception e) {
 			}
 		}

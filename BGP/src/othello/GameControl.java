@@ -21,7 +21,7 @@ public class GameControl {
 	private int gameSet = 0;
 	private int end = 0;
 
-	public void gameStatus(Tile tile) {  //////////////////°ÔÀÓÃ¢À» ÃÊ±âÈ­ »óÅÂ·Î ¸¸µë
+	public void gameStatus(Tile tile) {  //////////////////ê²Œì„ì°½ì„ ì´ˆê¸°í™” ìƒíƒœë¡œ ë§Œë“¬
 		for(int i = 0; i < N ; i++){
 			for(int j = 0; j < N ; j++){
 				tile.changeStone(i, j, 0);
@@ -35,7 +35,7 @@ public class GameControl {
 
 	}
 
-	public int checkEnd() { // ÇöÀç »óÈ²ÀÌ °ÔÀÓÀÌ ³¡³µ´ÂÁö ¾È³¡³µ´ÂÁö ´Ü¼ø °Ë»çÇÑ´Ù.
+	public int checkEnd() { // í˜„ì¬ ìƒí™©ì´ ê²Œì„ì´ ëë‚¬ëŠ”ì§€ ì•ˆëë‚¬ëŠ”ì§€ ë‹¨ìˆœ ê²€ì‚¬í•œë‹¤.
 		gap = 0;
 		player1 = 0;
 		player2 = 0;
@@ -50,21 +50,21 @@ public class GameControl {
 					player2++;
 			}
 		}
-		if (gap == 0) { // µÑ°÷ÀÌ ¾øÀ»¶§
-			if (player1 > player2) // P1ÀÌ ¸¹À¸¸é P1ÀÇ ½Â¸®
+		if (gap == 0) { // ë‘˜ê³³ì´ ì—†ì„ë•Œ
+			if (player1 > player2) // P1ì´ ë§ìœ¼ë©´ P1ì˜ ìŠ¹ë¦¬
 				return 1;
-			else if (player1 < player2) // p2°¡ ¸¹À¸¸é P2ÀÇ ½Â¸®
+			else if (player1 < player2) // p2ê°€ ë§ìœ¼ë©´ P2ì˜ ìŠ¹ë¦¬
 				return 2;
 			else
-				return 3; // °°À¸¸é ºñ±è
+				return 3; // ê°™ìœ¼ë©´ ë¹„ê¹€
 		}
-		if (gap != 0 && player1 == 0) // µÑ°÷Àº ÀÖÀ¸³ª ÇÃ·¹ÀÌ¾î 1ÀÇ µ¹ÀÌ ÇÏ³ªµµ ¾øÀ¸¸é ÇÃ·¹ÀÌ¾î1ÀÇ ÆĞ¹è
+		if (gap != 0 && player1 == 0) // ë‘˜ê³³ì€ ìˆìœ¼ë‚˜ í”Œë ˆì´ì–´ 1ì˜ ëŒì´ í•˜ë‚˜ë„ ì—†ìœ¼ë©´ í”Œë ˆì´ì–´1ì˜ íŒ¨ë°°
 			return 2;
-		else if (gap != 0 && player2 == 0) // µÑ°÷Àº ÀÖÀ¸³ª ÇÃ·¹ÀÌ¾î 2ÀÇ µ¹ÀÌ ÇÏ³ªµµ ¾øÀ¸¸é ÇÃ·¹ÀÌ¾î2ÀÇ
-											// ÆĞ¹è
+		else if (gap != 0 && player2 == 0) // ë‘˜ê³³ì€ ìˆìœ¼ë‚˜ í”Œë ˆì´ì–´ 2ì˜ ëŒì´ í•˜ë‚˜ë„ ì—†ìœ¼ë©´ í”Œë ˆì´ì–´2ì˜
+											// íŒ¨ë°°
 			return 1;
 
-		return 0; // ¸ğµç °æ¿ì¿¡ ÇØ´çÀÌ ¾ÈµÉ°æ¿ì °ÔÀÓ ÁøÇà
+		return 0; // ëª¨ë“  ê²½ìš°ì— í•´ë‹¹ì´ ì•ˆë ê²½ìš° ê²Œì„ ì§„í–‰
 	}
 
 	public boolean placeCheck(int player, int x, int y) {
@@ -85,7 +85,7 @@ public class GameControl {
 		return false;
 	}
 
-	// ºñ¾îÀÖ´Â ÀÚ¸®Áß¿¡ ÇÃ·¹ÀÌ¾î°¡ µÑ ¼ö ÀÖ´Â °÷ÀÌ ÀÖ´ÂÁö Ã¼Å©
+	// ë¹„ì–´ìˆëŠ” ìë¦¬ì¤‘ì— í”Œë ˆì´ì–´ê°€ ë‘˜ ìˆ˜ ìˆëŠ” ê³³ì´ ìˆëŠ”ì§€ ì²´í¬
 	public boolean allPlaceCheck(int player) {
 		boolean check = false;
 		for (int i = 0; i < N; i++) {
@@ -99,11 +99,11 @@ public class GameControl {
 	}
 
 	public boolean takeStoneCheck(int player, Point a, boolean check, int x, int y) {
-		//////// °Ë»çÇÒ À§Ä¡°¡ ¸ÊÀÇ ¹ÛÀÌ¸é °Ë»çÇÏÁö ¾ÊÀ½
+		//////// ê²€ì‚¬í•  ìœ„ì¹˜ê°€ ë§µì˜ ë°–ì´ë©´ ê²€ì‚¬í•˜ì§€ ì•ŠìŒ
 		if ((a.x) < 0 || (a.x) > 7 || (a.y) < 0 || (a.y) > 7)
 			return false;
 
-		// °Ë»ç À§Ä¡°¡ ºóÄ­ÀÌ°Å³ª ÇöÀç ÇÃ·¹ÀÌ¾îÀÇ »ö°ú °°À¸¸é °Ë»çÇÏÁö ¾ÊÀ½
+		// ê²€ì‚¬ ìœ„ì¹˜ê°€ ë¹ˆì¹¸ì´ê±°ë‚˜ í˜„ì¬ í”Œë ˆì´ì–´ì˜ ìƒ‰ê³¼ ê°™ìœ¼ë©´ ê²€ì‚¬í•˜ì§€ ì•ŠìŒ
 		if (gameMap[a.x][a.y] == 0)
 			return false;
 		else if ((gameMap[a.x][a.y] != 0) && (gameMap[a.x][a.y] != player)) {
@@ -140,7 +140,7 @@ public class GameControl {
 			System.out.println();
 		}
 		if (x != -1 && y != -1)
-			System.out.println("ÇÃ·¹ÀÌ¾î" + gameMap[x][y] + "ÀÇ ÅÏÀÇ ¿Ï·á");
+			System.out.println("í”Œë ˆì´ì–´" + gameMap[x][y] + "ì˜ í„´ì˜ ì™„ë£Œ");
 			
 	}
 }

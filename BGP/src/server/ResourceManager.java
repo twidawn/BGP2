@@ -6,7 +6,9 @@ import java.util.Vector;
 
 public class ResourceManager extends Vector {
 
-	public ResourceManager() {;}
+	public ResourceManager() {
+		;
+	}
 
 	public void add(ControlServer cs) {
 		super.add(cs);
@@ -37,29 +39,28 @@ public class ResourceManager extends Vector {
 		return getCs(i).getRoomName();
 	}
 
-	synchronized int diceResult(ControlServer cs, int diceNum){
+	synchronized int diceResult(ControlServer cs, int diceNum) {
 		int[] draw = new int[size()];
-		for(int i = 0; i < size(); i++){
-			if(getRoomName(i) != null &&getCs(i)!=cs && cs.getRoomName().equals(getCs(i).getRoomName())){
+		for (int i = 0; i < size(); i++) {
+			if (getRoomName(i) != null && getCs(i) != cs && cs.getRoomName().equals(getCs(i).getRoomName())) {
 				draw[i]++;
-				if(diceNum>getCs(i).getDiceNum())
+				if (diceNum > getCs(i).getDiceNum())
 					return 1;
-				else if(diceNum<getCs(i).getDiceNum())
+				else if (diceNum < getCs(i).getDiceNum())
 					return 2;
 				break;
 			}
 		}
-		
 
-		for(int i =0; i < size();i++){
+		for (int i = 0; i < size(); i++) {
 			getCs(i).setDice(false);
-		}//ÁÖ»çÀ§ ±¼¸° »óÅÂ¸¦ ÃÊ±â·Î ¹Ù²Þ
-		
+		} // ì£¼ì‚¬ìœ„ êµ´ë¦° ìƒíƒœë¥¼ ì´ˆê¸°ë¡œ ë°”ê¿ˆ
+
 		return 3;
 	}
-	
+
 	synchronized boolean roomCheck(String roomName) {
-		if(roomName.equals(""))
+		if (roomName.equals(""))
 			return false;
 		int count = 0;
 		for (int i = 0; i < size(); i++) {
@@ -79,21 +80,21 @@ public class ResourceManager extends Vector {
 				sendMsg(i, msg);
 		}
 	}
-	
+
 	synchronized boolean roomCheck(ControlServer cs) {
 		int count = 0;
 		for (int i = 0; i < size(); i++) {
 			if (getRoomName(i) != null && getRoomName(i).equals(cs.getRoomName()) && getCs(i) != cs)
 				count++;
 		}
-		if(count==0)
+		if (count == 0)
 			return true;
 		return false;
 	}
 
 	void roomNotice(ControlServer cs, String msg) {
 		for (int i = 0; i < size(); i++) {
-			if (getRoomName(i)!= null && getRoomName(i).equals(cs.getRoomName()))
+			if (getRoomName(i) != null && getRoomName(i).equals(cs.getRoomName()))
 				sendMsg(i, msg);
 		}
 	}
@@ -125,7 +126,7 @@ public class ResourceManager extends Vector {
 			return true;
 		return false;
 	}
-	
+
 	synchronized boolean checkDice(String roomName) {
 		int count = 0;
 		for (int i = 0; i < size(); i++) {
@@ -136,31 +137,4 @@ public class ResourceManager extends Vector {
 			return true;
 		return false;
 	}
-
-	/*
-	 * int getRoomNumber(int i){ return getCs(i).getRoomNumber(); }
-	 * 
-	 * synchronized boolean roomCheck(int roomNum){
-	 * 
-	 * int count=0; for(int i=0; i < size();i++){ if(roomNum ==
-	 * getRoomNumber(i)) count++; if(count>2) return false; }
-	 * 
-	 * return true; }
-	 * 
-	 * void sendMsg(ControlServer cs, String msg){ for(int i= 0; i < size();
-	 * i++){ if(getRoomNumber(i) == cs.getRoomNumber() && getCs(i)!=cs)
-	 * sendMsg(i, msg); } }
-	 * 
-	 * void btnEnabled(ControlServer cs, String msg){ for(int i= 0; i < size();
-	 * i++){ if(getRoomNumber(i) == cs.getRoomNumber()) sendMsg(i, msg); } }
-	 * 
-	 * 
-	 * synchronized boolean gamerCheck(int roomNum){ int count=0; for(int i= 0;
-	 * i<size();i++){ if(roomNum ==getRoomNumber(i)) count++; } if(count==2)
-	 * return true; return false; }
-	 * 
-	 * synchronized boolean isReady(int roomNum){ int count=0; for(int i= 0;
-	 * i<size();i++){ if(roomNum ==getRoomNumber(i) && getCs(i).getReady())
-	 * count++; } if(count==2) return true; return false; }
-	 */
 }

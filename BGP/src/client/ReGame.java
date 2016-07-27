@@ -1,6 +1,8 @@
 package client;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 
@@ -9,23 +11,32 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 public class ReGame extends JFrame {
-	// ½ÂÆÐand Àç°æ±âor ³ª°¡±â
+	// ìŠ¹íŒ¨and ìž¬ê²½ê¸°or ë‚˜ê°€ê¸°
 	JLabel lose;
 	JButton regame, out;
-	Font font1, font2;
-
+	
+	Font font1 = new Font("Serif", Font.ITALIC, 50) ;
 	public ReGame() {
-		font1 = new Font("Serif", Font.ITALIC, 70);
-		font2 = new Font("Serif", Font.ITALIC, 100);
+		setLayout(null);
+		
 		lose = new JLabel("LOSE");
-		regame = new JButton("Àç°æ±â");
-		out = new JButton("³ª°¡±â");
+		regame = new JButton("ìž¬ê²½ê¸°");
+		out = new JButton("ë‚˜ê°€ê¸°");
+		
+		lose.setBounds(90, 20, 200, 100);
+		lose.setFont(font1);
+		lose.setForeground(new Color(255,0,0));
+		
+		regame.setBounds(30, 180, 100, 50);
+		out.setBounds(170, 180, 100, 50);
 		
 		add(out);
 		add(regame);
 		add(lose);
 		
+		setSize(310, 300);
 		setVisible(false);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
 	public void sizeChange(int x, int y) {
