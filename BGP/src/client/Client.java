@@ -78,8 +78,8 @@ public class Client extends JFrame implements ActionListener, Runnable {
 
 		mgp.send.addActionListener(this);
 		
-		//rg.regame.addActionListener(this);
-		//rg.out.addActionListener(this);
+		rg.regame.addActionListener(this);
+		rg.out.addActionListener(this);
 
 		setTitle("League of Board Game");
 		sizeChange(600, 800);

@@ -35,7 +35,6 @@ public class RoomList extends Vector{
 	}
 	
 	synchronized public void writeRoom(PrintWriter pw){
-		System.out.println("옵니닼");
 		for(int i = 0; i<size() ; i++){
 			pw.println("[MKROOM]"+getRl(i)[0] + " " + getRl(i)[1]);
 		}
