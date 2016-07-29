@@ -126,6 +126,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 					//card.show(getContentPane(), "DICE");
 					//dg.start.setVisible(false);
 					//sizeChange(1000, 850);
+					setEnabled(true);
 					setDice();
 					writer.println("[LEAVE]");
 				} else if (msg.equals("[GODICE]")) {
@@ -188,15 +189,17 @@ public class Client extends JFrame implements ActionListener, Runnable {
 				} else if (msg.equals("[CGNUM]")) {
 					String temp = msg.substring(7);
 
-					for (int i = 0; i < sr.model.getRowCount() ; i++) {
+					/*for (int i = 0; i < sr.model.getRowCount() ; i++) {
 						sr.model.removeRow(i);
-					}
+					}*/
+					sr.model.setNumRows(0);
 					//sr.table.removeAll();
 					
 				} else if (msg.startsWith("[SETMG]")){
 					String mg = msg.substring(7);
 					mgp.logMsg.append(mg + "\n");
 				}
+				setEnabled(true);
 
 			}
 		} catch (IOException e) {
@@ -335,7 +338,20 @@ public class Client extends JFrame implements ActionListener, Runnable {
 
 		} else if (e.getSource() == rg.out) {
 			System.out.println("고러켄 안돼지");
-			System.exit(1); // 강제종료
+			//System.exit(1); // 강제종료
+			
+			card.show(getContentPane(), "SERIV"); 
+			sizeChange(415, 420);
+			rg.setVisible(false);
+			
+			/*
+			for (int i = 0; i < sr.model.getRowCount() ; i++) {
+				sr.model.removeRow(i);
+			}
+			writer.println("[ROOMINDEX]");
+			*/
+			writer.println("[LEAVE]");
+			
 			/*
 			 * or 대기실 card.show(getContentPane(), "SERIV"); sizeChange(415,
 			 * 420);
