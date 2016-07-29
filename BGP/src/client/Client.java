@@ -181,10 +181,13 @@ public class Client extends JFrame implements ActionListener, Runnable {
 				} else if (msg.startsWith("[WHITE]")) {
 					mgp.turnImage.setIcon(new ImageIcon("image\\white.png"));
 				} else if (msg.equals("[MYWIN]")) {
+					setEnabled(false);
 					setReGame("뭐?");
 				} else if (msg.equals("[MYLOS]")) {
+					setEnabled(false);
 					setReGame("패배!");
 				} else if (msg.equals("[GDRAW]")) {
+					setEnabled(false);
 					setReGame("비김");
 				} else if (msg.equals("[CGNUM]")) {
 					String temp = msg.substring(7);
@@ -194,12 +197,12 @@ public class Client extends JFrame implements ActionListener, Runnable {
 					}*/
 					sr.model.setNumRows(0);
 					//sr.table.removeAll();
-					
+					//setEnabled(true);
 				} else if (msg.startsWith("[SETMG]")){
 					String mg = msg.substring(7);
 					mgp.logMsg.append(mg + "\n");
 				}
-				setEnabled(true);
+				
 
 			}
 		} catch (IOException e) {
@@ -328,6 +331,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 			}
 			
 		} else if (e.getSource() == rg.regame) {
+			setEnabled(true);
 			System.out.println("시렁");
 			// 다시 주사위화면으로 07.27
 			setDice();
@@ -337,6 +341,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 			
 
 		} else if (e.getSource() == rg.out) {
+			setEnabled(true);
 			System.out.println("고러켄 안돼지");
 			//System.exit(1); // 강제종료
 			
@@ -350,7 +355,13 @@ public class Client extends JFrame implements ActionListener, Runnable {
 			}
 			writer.println("[ROOMINDEX]");
 			*/
-			writer.println("[LEAVE]");
+			
+						
+			
+			if(sr.model.getRowCount()>0){
+				//sr.model.setNumRows(0);
+				writer.println("[LEAVE]");
+			}
 			
 			/*
 			 * or 대기실 card.show(getContentPane(), "SERIV"); sizeChange(415,

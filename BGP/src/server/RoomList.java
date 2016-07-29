@@ -27,6 +27,17 @@ public class RoomList extends Vector{
 		}
 	}
 	
+	public String getRoomNumber(String roomName){
+		for(int i = 0; i< size();i++){
+			if(getRl(i)[0].equals(roomName)){
+				if(getRl(i)[1].equals("1"))
+					return "1";
+				break;
+			}
+		}
+		return "2";
+	}
+	
 	public void delectRoom(String roomName){
 		for(int i = 0; i < size(); i++){
 			if(getRl(i)[0].equals(roomName))

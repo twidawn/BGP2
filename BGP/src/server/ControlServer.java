@@ -89,6 +89,7 @@ public class ControlServer extends Thread {
 				}else if(msg.startsWith("[CHECKF]")){
 					rm.allNotice(msg);
 				}else if(msg.startsWith("[CASTD]")){ //주사위 던짐
+					ready = false;
 					dice = true;
 					diceNum = (int)(Math.random()*6)+1;
 					writer.println("[UDICE]" + diceNum);
@@ -121,10 +122,17 @@ public class ControlServer extends Thread {
 					ready = false;
 					//rl.delectRoom(roomName);
 					//rm.allNotice("[RMROOM]" + roomName);
-					rl.changeNumber(roomName, "1");
-					rm.allNotice("[CGNUM]");
-					//roomName=null;
-					rm.roomUpdate(rl);
+					
+					if(rl.getRoomNumber(roomName).equals("1")){
+						rl.delectRoom(roomName);
+						rm.allNotice("[RMROOM]" + roomName);
+						roomName=null;
+					}else{
+						rl.changeNumber(roomName, "1");
+						rm.allNotice("[CGNUM]");
+						rm.roomUpdate(rl);
+						roomName=null;
+					}
 				}else if (msg.equals("[MYWIN]")){ //내 승리일경우 나에겐 승을 적에겐 패를 알린다.
 					writer.println("[MYWIN]");
 					rm.roomMsg(this, "[MYLOS]");
