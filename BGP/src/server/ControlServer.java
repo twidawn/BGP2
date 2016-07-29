@@ -139,6 +139,10 @@ public class ControlServer extends Thread {
 					if(rm.isReady(roomName)){
 						rm.roomNotice(this, "[GODICE]");
 					}
+				}else if (msg.startsWith("[MSGSD]")){
+					String mg = msg.substring(7);
+					System.out.println(mg);
+					rm.roomNotice(this, "[SETMG]"+"["+userName+"] : "+mg);
 				}
 
 			}

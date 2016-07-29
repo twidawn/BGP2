@@ -30,8 +30,8 @@ public class GameControl {
 		
 		tile.changeStone(3, 3, 1);
 		tile.changeStone(4, 4, 1);
-		tile.changeStone(3, 4, 1);
-		tile.changeStone(4, 3, 1);
+		tile.changeStone(3, 4, 2);
+		tile.changeStone(4, 3, 2);
 
 	}
 

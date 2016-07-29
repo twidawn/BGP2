@@ -2,6 +2,8 @@ package client;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.PrintWriter;
 
 import javax.swing.ImageIcon;
@@ -13,19 +15,24 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import othello.*;
 
-public class MainGamePanel extends JPanel {
+public class MainGamePanel extends JPanel implements KeyListener{
 	private JPanel megPanel;
 	private JPanel gamePanel;
-	private JTextField sendMsg;
-	private JTextArea logMsg;
+	public JTextField sendMsg;
+	public JTextArea logMsg;
 	public JButton send;
 	GameControl gc;
 	Tile tile;
 	JLabel turnNotice;
+	PrintWriter pw;
 
 	Font font1 = new Font("Serif", Font.ITALIC, 50);
 	protected static JLabel turnImage;
 
+	public void setWirter(PrintWriter pw){
+		this.pw =pw;
+	}
+	
 	public MainGamePanel() {
 		setLayout(null);
 		setBackground(Color.white);
@@ -52,7 +59,7 @@ public class MainGamePanel extends JPanel {
 		megPanel.add(send);
 
 		add(megPanel);
-
+		sendMsg.addKeyListener(this);
 		setSize(1300, 1000);
 
 		turnImage = new JLabel(new ImageIcon("image\\black.png"));
@@ -84,6 +91,32 @@ public class MainGamePanel extends JPanel {
 	
 	public void visibleOmok(){
 		tile.setVisible(false);
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+		if(e.getKeyCode() == KeyEvent.VK_ENTER){
+			String temp;
+			if(!sendMsg.getText().equals("")){
+				temp = sendMsg.getText();
+				pw.println("[MSGSD]"+temp);
+				sendMsg.setText("");
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

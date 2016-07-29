@@ -93,6 +93,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 		// TODO Auto-generated method stub
 		String msg;
 		try {
+			mgp.setWirter(writer);
 			while ((msg = reader.readLine()) != null) {
 				// System.out.println(msg);
 				if (msg.startsWith("[MKROOM]")) { // 방생성
@@ -119,7 +120,6 @@ public class Client extends JFrame implements ActionListener, Runnable {
 				} else if (msg.startsWith("[CHECKF]")) {
 					sr.model.setValueAt("2", Integer.parseInt(msg.substring(8)), 1);
 				} else if (msg.equals("[LEAVE]")) { // 누가 방을 나갔을 경우
-
 					//dg.movedice1.setIcon(new ImageIcon("image\\mdice01.gif"));
 					//dg.movedice2.setIcon(new ImageIcon("image\\mdice01.gif"));
 					//dg.gamesel.setVisible(false);
@@ -143,13 +143,19 @@ public class Client extends JFrame implements ActionListener, Runnable {
 				} else if (msg.startsWith("[DICEL]")) {
 					playerColor = 2;
 					mgp.tile.turn = 2;
+					mgp.tile.setenable(false);
 				} else if (msg.equals("[GOTHE]")) {
+					mgp.turnImage.setIcon(new ImageIcon("image\\black.png"));
 					gc.gameStatus(mgp.tile);
 					card.show(getContentPane(), "OTG");
 					mgp.visibleOthello();
 					mgp.tile.setPw(writer);
+					mgp.logMsg.setText("");
+					mgp.sendMsg.setText("");
 					sizeChange(1300, 900);
 				} else if(msg.equals("[GOOMOK]")){ //////////////////오목부분
+					mgp.logMsg.setText("");
+					mgp.sendMsg.setText("");
 					card.show(getContentPane(), "OTG");
 					mgp.visibleOmok();
 					sizeChange(1300, 900);
@@ -162,6 +168,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 					else
 						mgp.tile.changeStone(x, y, 1);
 				} else if (msg.startsWith("[YOURT]")) {
+					mgp.tile.setenable(true);
 					mgp.tile.gameWLD();
 					if (playerColor == 1)
 						writer.println("[BLACK]");
@@ -186,6 +193,9 @@ public class Client extends JFrame implements ActionListener, Runnable {
 					}
 					//sr.table.removeAll();
 					
+				} else if (msg.startsWith("[SETMG]")){
+					String mg = msg.substring(7);
+					mgp.logMsg.append(mg + "\n");
 				}
 
 			}
@@ -307,6 +317,13 @@ public class Client extends JFrame implements ActionListener, Runnable {
 			writer.println("[CASTD]");
 		} else if (e.getSource() == mgp.send) {
 			System.out.println("메시지 전송 버튼");
+			String temp;
+			if(!mgp.sendMsg.getText().equals("")){
+				temp = mgp.sendMsg.getText();
+				writer.println("[MSGSD]"+temp);
+				mgp.sendMsg.setText("");
+			}
+			
 		} else if (e.getSource() == rg.regame) {
 			System.out.println("시렁");
 			// 다시 주사위화면으로 07.27

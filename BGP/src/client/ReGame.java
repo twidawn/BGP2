@@ -34,6 +34,7 @@ public class ReGame extends JFrame {
 		add(regame);
 		add(lose);
 		
+		setResizable(false);
 		setSize(310, 300);
 		setVisible(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);

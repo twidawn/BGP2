@@ -26,6 +26,7 @@ public class MakeRoom extends JFrame{
 		add(roonname);
 		setTitle("방만들기");
 		setVisible(false);
+		setResizable(false);
 		
 	}
 	

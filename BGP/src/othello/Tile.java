@@ -105,7 +105,6 @@ public class Tile extends JPanel implements ActionListener {
 		
 		
 		if (!enable){
-			System.out.println("플레이어 "+ turn + enable);
 			return;
 		}
 		
@@ -138,6 +137,7 @@ public class Tile extends JPanel implements ActionListener {
 		System.out.println("Player"+ turn + "턴 끝");		
 		//흑돌Turn 이미지 바꾸기  여기넣을예정		
 		enable=false;
+		setenable(false);
 		pw.println("[ENDTN]");
 		
 	}
