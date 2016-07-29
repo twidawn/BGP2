@@ -41,6 +41,7 @@ public class ControlServer extends Thread {
 	public int getDiceNum(){return diceNum;}
 	
 	public boolean getReady(){return ready;}
+	public void setReady(){ready = true;}
 	
 	public String getRoomName(){
 		return roomName;
@@ -105,6 +106,8 @@ public class ControlServer extends Thread {
 					}
 				}else if(msg.startsWith("[GOTHE]")){ //오셀로를 선택함
 					rm.roomNotice(this, "[GOTHE]");
+				}else if(msg.equals("[GOOMOK]")){
+					rm.roomNotice(this, "[GOOMOK]");					
 				}else if(msg.startsWith("[STONE]")){
 					rm.roomMsg(this, msg);
 				}else if(msg.startsWith("[ENDTN]")){
@@ -115,9 +118,13 @@ public class ControlServer extends Thread {
 					rm.roomNotice(this, "[BLACK]");
 				}else if (msg.equals("[LEAVE]")){
 					dice = false;
-					rl.delectRoom(roomName);
-					rm.allNotice("[RMROOM]" + roomName);
-					roomName=null;
+					ready = false;
+					//rl.delectRoom(roomName);
+					//rm.allNotice("[RMROOM]" + roomName);
+					rl.changeNumber(roomName, "1");
+					rm.allNotice("[CGNUM]");
+					//roomName=null;
+					rm.roomUpdate(rl);
 				}else if (msg.equals("[MYWIN]")){ //내 승리일경우 나에겐 승을 적에겐 패를 알린다.
 					writer.println("[MYWIN]");
 					rm.roomMsg(this, "[MYLOS]");
@@ -126,6 +133,12 @@ public class ControlServer extends Thread {
 					rm.roomMsg(this, "[MYWIN]");
 				}else if (msg.equals("[GDRAW]")){ //비기면 둘다 비긴것이다.
 					rm.roomNotice(this, "[GDRAW]");
+				}else if (msg.equals("[REGAME]")){
+					ready = true;
+					dice = false;
+					if(rm.isReady(roomName)){
+						rm.roomNotice(this, "[GODICE]");
+					}
 				}
 
 			}

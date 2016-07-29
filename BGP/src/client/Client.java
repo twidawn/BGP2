@@ -77,7 +77,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 		mr.makeRoom.addActionListener(this);
 
 		mgp.send.addActionListener(this);
-		
+
 		rg.regame.addActionListener(this);
 		rg.out.addActionListener(this);
 
@@ -111,18 +111,25 @@ public class Client extends JFrame implements ActionListener, Runnable {
 				} else if (msg.startsWith("[JOINR]")) { // 방참가
 					String temp = msg.substring(7);
 					writer.println("[CHECKF]" + sr.table.getSelectedRow());
-					card.show(getContentPane(), "DICE");
-					sizeChange(1000, 850);
+					//card.show(getContentPane(), "DICE");
+					//sizeChange(1000, 850);
+					setDice();
 				} else if (msg.equals("[FULLR]")) {
 					JOptionPane.showMessageDialog(this, "방이 다 찼습니다.");
 				} else if (msg.startsWith("[CHECKF]")) {
 					sr.model.setValueAt("2", Integer.parseInt(msg.substring(8)), 1);
-				} else if (msg.equals("[LEAVE]")) {
-					dg.gamesel.setVisible(false);
-					card.show(getContentPane(), "SERIV");
-					sizeChange(415, 420);
+				} else if (msg.equals("[LEAVE]")) { // 누가 방을 나갔을 경우
+
+					//dg.movedice1.setIcon(new ImageIcon("image\\mdice01.gif"));
+					//dg.movedice2.setIcon(new ImageIcon("image\\mdice01.gif"));
+					//dg.gamesel.setVisible(false);
+					//card.show(getContentPane(), "DICE");
+					//dg.start.setVisible(false);
+					//sizeChange(1000, 850);
+					setDice();
 					writer.println("[LEAVE]");
 				} else if (msg.equals("[GODICE]")) {
+					this.setEnabled(true);
 					dg.start.setVisible(true);
 				} else if (msg.startsWith("[SETDC]")) { // 상대방의 주사위 세팅
 					dg.movedice2.setIcon(dg.icon[Integer.parseInt(msg.substring(7)) - 1]);
@@ -139,9 +146,14 @@ public class Client extends JFrame implements ActionListener, Runnable {
 				} else if (msg.equals("[GOTHE]")) {
 					gc.gameStatus(mgp.tile);
 					card.show(getContentPane(), "OTG");
+					mgp.visibleOthello();
 					mgp.tile.setPw(writer);
 					sizeChange(1300, 900);
-				} else if (msg.startsWith("[STONE]")) {
+				} else if(msg.equals("[GOOMOK]")){ //////////////////오목부분
+					card.show(getContentPane(), "OTG");
+					mgp.visibleOmok();
+					sizeChange(1300, 900);
+				}else if (msg.startsWith("[STONE]")) {
 					String temp = msg.substring(7);
 					int x = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));
 					int y = Integer.parseInt(temp.substring(temp.indexOf(" ") + 1));
@@ -161,28 +173,35 @@ public class Client extends JFrame implements ActionListener, Runnable {
 				} else if (msg.startsWith("[WHITE]")) {
 					mgp.turnImage.setIcon(new ImageIcon("image\\white.png"));
 				} else if (msg.equals("[MYWIN]")) {
-					rg.setTitle("Player" + playerColor);
-					rg.lose.setText("뭐?");
-					rg.sizeChange(300, 300);
-					rg.setVisible(true);
+					setReGame("뭐?");
 				} else if (msg.equals("[MYLOS]")) {
-					rg.setTitle("Player" + playerColor);
-					rg.lose.setText("패배!");
-					rg.sizeChange(300, 300);
-					rg.setVisible(true);
+					setReGame("패배!");
 				} else if (msg.equals("[GDRAW]")) {
-					rg.setTitle("Player" + playerColor);
-					rg.lose.setText("비김");
-					rg.sizeChange(300, 300);
-					rg.setVisible(true);
+					setReGame("비김");
+				} else if (msg.equals("[CGNUM]")) {
+					String temp = msg.substring(7);
+
+					for (int i = 0; i < sr.model.getRowCount() ; i++) {
+						sr.model.removeRow(i);
+					}
+					//sr.table.removeAll();
+					
 				}
-				
+
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("실행부에서 에러" + e.getMessage());
 		}
 
+	}
+	
+	public void setReGame(String text){
+		this.setEnabled(false);
+		rg.setTitle("Player" + playerColor);
+		rg.lose.setText(text);
+		rg.sizeChange(300, 300);
+		rg.setVisible(true);
 	}
 
 	public void start() {
@@ -214,7 +233,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 			writer.println("[TWITT]");
 		} else if (e.getSource() == lp.guest) {
 			System.out.println("게스트 버튼 눌림");
-			if(sr.table.getRowCount()==0)
+			if (sr.table.getRowCount() == 0)
 				writer.println("[ROOMINDEX]");
 			// @@대기실들어가기@@
 			card.show(getContentPane(), "SERIV");
@@ -253,9 +272,13 @@ public class Client extends JFrame implements ActionListener, Runnable {
 
 			// sr.model.addRow(a);
 			// 다이스화면으로넘기기
+			/*
 			card.show(getContentPane(), "DICE");
 			dg.start.setVisible(false);
 			sizeChange(1000, 850);
+			
+			*/
+			setDice();
 			mr.setVisible(false);
 
 		} else if (e.getSource() == sr.enterRoom) {// 방참가
@@ -276,6 +299,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 
 			cg.setVisible(false);
 		} else if (e.getSource() == cg.omok) {
+			writer.println("[GOOMOK]");
 			cg.setVisible(false);
 			System.out.println("오목버튼 눌림");
 		} else if (e.getSource() == dg.start) {
@@ -283,19 +307,22 @@ public class Client extends JFrame implements ActionListener, Runnable {
 			writer.println("[CASTD]");
 		} else if (e.getSource() == mgp.send) {
 			System.out.println("메시지 전송 버튼");
-		} else if (e.getSource() == rg.regame){
+		} else if (e.getSource() == rg.regame) {
 			System.out.println("시렁");
 			// 다시 주사위화면으로 07.27
-			card.show(getContentPane(), "DICE");
-			dg.start.setVisible(false);
-			sizeChange(1000, 850);
+			setDice();
 			
-		}else if (e.getSource() == rg.out){
+			rg.setVisible(false);
+			writer.println("[REGAME]");
+			
+
+		} else if (e.getSource() == rg.out) {
 			System.out.println("고러켄 안돼지");
-			System.exit(1); //강제종료
-		/*	   or  대기실
-			card.show(getContentPane(), "SERIV");
-			sizeChange(415, 420);*/
+			System.exit(1); // 강제종료
+			/*
+			 * or 대기실 card.show(getContentPane(), "SERIV"); sizeChange(415,
+			 * 420);
+			 */
 		}
 
 	}
@@ -305,6 +332,15 @@ public class Client extends JFrame implements ActionListener, Runnable {
 		Dimension frameSize = this.getSize();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+	}
+	
+	public void setDice(){
+		dg.movedice1.setIcon(new ImageIcon("image\\mdice01.gif"));
+		dg.movedice2.setIcon(new ImageIcon("image\\mdice01.gif"));
+		sizeChange(1000, 850);
+		dg.gamesel.setVisible(false);
+		dg.start.setVisible(false);
+		card.show(getContentPane(), "DICE");
 	}
 
 	public static void main(String[] args) {

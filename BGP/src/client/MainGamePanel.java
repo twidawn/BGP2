@@ -73,8 +73,18 @@ public class MainGamePanel extends JPanel {
 		// this.gc = gc;
 		gc.gameStatus(tile);
 	}
-
+	
 	public void setOmok() {
 		;
 	}
+	
+	public void visibleOthello(){
+		tile.setVisible(true);
+	}
+	
+	public void visibleOmok(){
+		tile.setVisible(false);
+	}
+
+	
 }

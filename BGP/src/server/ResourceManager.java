@@ -137,4 +137,19 @@ public class ResourceManager extends Vector {
 			return true;
 		return false;
 	}
+	
+	public void roomUpdate(RoomList rl){
+		
+		for(int i = 0; i < size();i ++){
+			try {
+				PrintWriter pw = new PrintWriter(getSocket(i).getOutputStream(), true);
+				rl.writeRoom(pw);
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+			
+		}
+		
+		
+	}
 }
