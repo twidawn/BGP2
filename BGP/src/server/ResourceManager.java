@@ -138,6 +138,22 @@ public class ResourceManager extends Vector {
 		return false;
 	}
 	
+	synchronized boolean checkNewPlayer(String roomName, ControlServer cs) {
+		for (int i = 0; i < size(); i++) {
+			if (getRoomName(i) != null && roomName.equals(getRoomName(i)) && getCs(i) != cs && getCs(i).getDice() == false)
+				return true;
+		}
+		return false;
+	}
+	
+	String setRivalName(String roomName, ControlServer cs) {
+		for (int i = 0; i < size(); i++) {
+			if (getRoomName(i) != null && roomName.equals(getRoomName(i)) && getCs(i) != cs)
+				return getCs(i).getUserName();
+		}
+		return null;
+	}
+	
 	public void roomUpdate(RoomList rl){
 		
 		for(int i = 0; i < size();i ++){

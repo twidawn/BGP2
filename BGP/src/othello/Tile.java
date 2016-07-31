@@ -107,7 +107,6 @@ public class Tile extends JPanel implements ActionListener {
 		if (!enable){
 			return;
 		}
-		
 		gameWLD();		
 		
 		System.out.println("난 플레이어 "+ turn + "입니다.");

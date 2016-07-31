@@ -58,8 +58,8 @@ public class DiceGame extends JPanel{
 		add(gamesel);
 
 		start.setBounds(350, 400, 200, 200);
-		player1.setBounds(150, 30, 70, 70);
-		player2.setBounds(750, 30, 70, 70);
+		player1.setBounds(50, 30, 220, 70);
+		player2.setBounds(650, 30, 220, 70);
 		vs.setBounds(400, 150, 150, 150);
 
 		movedice1.setBounds(70, 100, 250, 250);
@@ -68,18 +68,6 @@ public class DiceGame extends JPanel{
 
 		gamesel.setVisible(false);
 
-	}
-
-	static String win(int a, int b) {
-		String c = "";
-
-		if (a == b)
-			c = "DROW";
-		if (a > b)
-			c = "1P WIN";
-		if (a < b)
-			c = "2P WIN";
-		return c;
 	}
 
 }

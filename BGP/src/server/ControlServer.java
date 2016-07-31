@@ -1,6 +1,5 @@
 package server;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,7 +10,6 @@ import java.net.Socket;
 public class ControlServer extends Thread {
 	
 	private String userName = null;
-	//private int roomNumber=-1;
 	private String roomName = null;
 	private Socket socket;
 	private ServerSocket sc;
@@ -46,6 +44,9 @@ public class ControlServer extends Thread {
 	public String getRoomName(){
 		return roomName;
 	}
+	public String getUserName(){
+		return userName;
+	}
 	
 	/*
 	public int getRoomNumber(){
@@ -65,8 +66,10 @@ public class ControlServer extends Thread {
 				
 				if(msg.equals("[GUEST]")){//게스트 로그인
 					userName = "GUEST" + Integer.toString(++Server.playerCount);
-				} else if(msg.equals("[TWITT]")){//트위터 로그인 버튼 누름
+					writer.println("[SETNM]" + userName);
+				} else if(msg.startsWith("[TWITT]")){//트위터 로그인 버튼 누름
 					System.out.println("트위터 버튼 눌림");
+					userName = msg.substring(7) + "(T)";
 				} else if(msg.equals("[ROOMINDEX]")){ //07.27 방정보를 불러옴
 					rl.writeRoom(writer);
 				} else if(msg.startsWith("[MKROOM]")){//방만듬
@@ -79,9 +82,15 @@ public class ControlServer extends Thread {
 					String temp = msg.substring(7);
 					roomName =temp;
 					if(rm.roomCheck(temp)){
+						String rivalName = rm.setRivalName(roomName, this);
+						if(rivalName!=null){
+							writer.println("[RVNAME]" + rivalName);
+							rm.roomMsg(this, "[RVNAME]" + userName);
+						}
 						rl.changeNumber(roomName, "2");
 						writer.println("[JOINR]" + temp);
-						rm.roomNotice(this, "[GODICE]");
+						if(rm.checkNewPlayer(roomName, this))
+							rm.roomNotice(this, "[GODICE]");
 					}else{
 						roomName= null;
 						writer.println("[FULLR]");
@@ -106,12 +115,13 @@ public class ControlServer extends Thread {
 						}
 					}
 				}else if(msg.startsWith("[GOTHE]")){ //오셀로를 선택함
-					rm.roomNotice(this, "[GOTHE]");
+					rm.roomNotice(this, "[GOTHE]"+userName);
 				}else if(msg.equals("[GOOMOK]")){
-					rm.roomNotice(this, "[GOOMOK]");					
+					rm.roomNotice(this, "[GOOMOK]"+userName);					
 				}else if(msg.startsWith("[STONE]")){
 					rm.roomMsg(this, msg);
 				}else if(msg.startsWith("[ENDTN]")){
+					writer.println("[SETTN]");
 					rm.roomMsg(this, "[YOURT]");
 				}else if (msg.equals("[WHITE]")){
 					rm.roomNotice(this, "[WHITE]");
@@ -131,12 +141,15 @@ public class ControlServer extends Thread {
 						rl.changeNumber(roomName, "1");
 						rm.allNotice("[CGNUM]");
 						rm.roomUpdate(rl);
+						rm.roomMsg(this, "[LEAVE]");
 						roomName=null;
 					}
 				}else if (msg.equals("[MYWIN]")){ //내 승리일경우 나에겐 승을 적에겐 패를 알린다.
+					System.out.println(userName);
 					writer.println("[MYWIN]");
 					rm.roomMsg(this, "[MYLOS]");
 				}else if (msg.equals("[MYLOS]")){//내 패배일경우 나에겐 패를 적에겐 승을 알린다.
+					System.out.println(userName);
 					writer.println("[MYLOS]");
 					rm.roomMsg(this, "[MYWIN]");
 				}else if (msg.equals("[GDRAW]")){ //비기면 둘다 비긴것이다.
@@ -144,7 +157,7 @@ public class ControlServer extends Thread {
 				}else if (msg.equals("[REGAME]")){
 					ready = true;
 					dice = false;
-					if(rm.isReady(roomName)){
+					if(rm.isReady(roomName) || rm.checkNewPlayer(roomName, this)){ //둘다 준비가 되었거나 새플레이어가 있으면 주사위를 던짐
 						rm.roomNotice(this, "[GODICE]");
 					}
 				}else if (msg.startsWith("[MSGSD]")){
@@ -167,6 +180,9 @@ public class ControlServer extends Thread {
 					rl.delectRoom(roomName);
 					rm.allNotice("[RMROOM]" + roomName);
 				}else if(roomName != null && !rm.roomCheck(this)){//방에 사람이 남아있을 경우
+					rl.changeNumber(roomName, "1");
+					rm.allNotice("[CGNUM]");
+					rm.roomUpdate(rl);
 					rm.roomMsg(this, "[LEAVE]");
 				}
 				rm.remove(this);
