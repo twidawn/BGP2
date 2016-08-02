@@ -164,6 +164,9 @@ public class ControlServer extends Thread {
 					String mg = msg.substring(7);
 					System.out.println(mg);
 					rm.roomNotice(this, "[SETMG]"+"["+userName+"] : "+mg);
+				}else if (msg.equals("[NEWSET]")){
+					dice = false;
+					ready = false;
 				}
 
 			}

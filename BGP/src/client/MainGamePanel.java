@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import omok.*;
 import othello.*;
 
 public class MainGamePanel extends JPanel implements KeyListener{
@@ -23,6 +25,7 @@ public class MainGamePanel extends JPanel implements KeyListener{
 	public JButton send;
 	GameControl gc;
 	Tile tile;
+	DrawBorad omokDb;
 	JLabel turnNotice;
 	PrintWriter pw;
 
@@ -81,15 +84,21 @@ public class MainGamePanel extends JPanel implements KeyListener{
 		gc.gameStatus(tile);
 	}
 	
-	public void setOmok() {
-		;
+	public void setOmok(MapSize ms, Map omokMap) {
+		omokDb = new DrawBorad(ms, omokMap);
+		omokDb.setBounds(20,20,800,800);
+		add(omokDb);
+		addMouseListener(new MouseEventHandler(omokMap, ms, omokDb));
 	}
 	
 	public void visibleOthello(){
 		tile.setVisible(true);
+		omokDb.setVisible(false);
 	}
 	
 	public void visibleOmok(){
+		
+		omokDb.setVisible(true);
 		tile.setVisible(false);
 	}
 

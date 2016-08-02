@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import omok.*;
 import othello.*;
 
 public class Client extends JFrame implements ActionListener, Runnable {
@@ -32,7 +33,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 	private int msgcnt = 0;
 	private String myName = null;
 	private String rivalName = null;
-	
+
 	GameControl gc;
 
 	CardLayout card = new CardLayout();
@@ -47,6 +48,9 @@ public class Client extends JFrame implements ActionListener, Runnable {
 	MakeRoom mr;
 	ReGame rg;
 
+	MapSize ms = new MapSize();
+	Map omokMap;
+
 	public Client() {
 		setLayout(card);
 
@@ -60,6 +64,10 @@ public class Client extends JFrame implements ActionListener, Runnable {
 		mgp = new MainGamePanel();
 		mgp.setOthello(gc);
 		rg = new ReGame();
+
+		// 오목세팅
+		omokMap = new Map(ms);
+		mgp.setOmok(ms, omokMap);
 
 		add("LOGIN", lp);
 		add("MATCHI", ma);
@@ -113,7 +121,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 							sr.model.removeRow(i);
 					}
 				} else if (msg.startsWith("[JOINR]")) { // 방참가
-					//String temp = msg.substring(7);
+					// String temp = msg.substring(7);
 					writer.println("[CHECKF]" + sr.table.getSelectedRow());
 					// card.show(getContentPane(), "DICE");
 					// sizeChange(1000, 850);
@@ -123,11 +131,12 @@ public class Client extends JFrame implements ActionListener, Runnable {
 				} else if (msg.startsWith("[CHECKF]")) {
 					sr.model.setValueAt("2", Integer.parseInt(msg.substring(8)), 1);
 				} else if (msg.equals("[LEAVE]")) { // 누가 방을 나갔을 경우
-					rivalName="";
+					rivalName = "";
 					JOptionPane.showMessageDialog(this, "상대방이 떠났습니다.");
-					//reset();
+					// reset();
 					setEnabled(true);
 					setDice();
+					writer.println("[NEWSET]");
 				} else if (msg.equals("[GODICE]")) {
 					this.setEnabled(true);
 					dg.start.setVisible(true);
@@ -137,13 +146,17 @@ public class Client extends JFrame implements ActionListener, Runnable {
 					dg.movedice1.setIcon(dg.icon[Integer.parseInt(msg.substring(7)) - 1]);
 				} else if (msg.startsWith("[DICEW]")) {
 					playerColor = 1;
+					omokMap.checkBNW = true;
 					mgp.tile.turn = 1;
 					mgp.tile.setenable(true);
+					mgp.omokDb.setEnabled(true);
 					dg.gamesel.setVisible(true);
 				} else if (msg.startsWith("[DICEL]")) {
 					playerColor = 2;
+					omokMap.checkBNW = false;
 					mgp.tile.turn = 2;
 					mgp.tile.setenable(false);
+					mgp.omokDb.setEnabled(false);
 				} else if (msg.startsWith("[GOTHE]")) {
 					String name = msg.substring(7);
 					game = 1;
@@ -157,6 +170,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 					mgp.sendMsg.setText("");
 					sizeChange(1300, 900);
 				} else if (msg.startsWith("[GOOMOK]")) { ////////////////// 오목부분
+					omokMap.init();
 					game = 2;
 					mgp.logMsg.setText("");
 					mgp.sendMsg.setText("");
@@ -167,13 +181,18 @@ public class Client extends JFrame implements ActionListener, Runnable {
 					String temp = msg.substring(7);
 					int x = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));
 					int y = Integer.parseInt(temp.substring(temp.indexOf(" ") + 1));
-					if (playerColor == 1)
-						mgp.tile.changeStone(x, y, 2);
-					else
-						mgp.tile.changeStone(x, y, 1);
+					if (game == 1) {
+						if (playerColor == 1)
+							mgp.tile.changeStone(x, y, 2);
+						else
+							mgp.tile.changeStone(x, y, 1);
+					} else {
+							omokMap.setMap(x, y);
+							
+					}
 				} else if (msg.startsWith("[YOURT]")) {
-					//mgp.tile.setenable(true);
-					//mgp.tile.gameWLD();
+					// mgp.tile.setenable(true);
+					// mgp.tile.gameWLD();
 					mgp.turnNotice.setText(myName);
 					if (playerColor == 1)
 						writer.println("[BLACK]");
@@ -192,9 +211,9 @@ public class Client extends JFrame implements ActionListener, Runnable {
 					lose++;
 					setEnabled(false);
 					setReGame("패배!");
-					System.out.println("패배횟수 : "+lose);
-					if(twitter == true){
-						if(!twitCnn.sendMsg(lose+"패배를 적립하셨습니다!")){
+					System.out.println("패배횟수 : " + lose);
+					if (twitter == true) {
+						if (!twitCnn.sendMsg(lose + "패배를 적립하셨습니다!")) {
 							JOptionPane.showMessageDialog(this, "메세지 전송 실패");
 						}
 					}
@@ -207,12 +226,12 @@ public class Client extends JFrame implements ActionListener, Runnable {
 				} else if (msg.startsWith("[SETMG]")) {
 					String mg = msg.substring(7);
 					mgp.logMsg.append(mg + "\n");
-				} else if (msg.startsWith("[SETNM]")){
+				} else if (msg.startsWith("[SETNM]")) {
 					myName = msg.substring(7);
-				} else if (msg.startsWith( "[RVNAME]")){
+				} else if (msg.startsWith("[RVNAME]")) {
 					rivalName = msg.substring(8);
 					dg.player2.setText(rivalName);
-				} else if (msg.equals("[SETTN]")){
+				} else if (msg.equals("[SETTN]")) {
 					mgp.turnNotice.setText(rivalName);
 				}
 
@@ -405,9 +424,11 @@ public class Client extends JFrame implements ActionListener, Runnable {
 		cl.connect();
 		cl.start();
 	}
-	
-	public void reset(){
-		win=0; draw=0; lose=0;
+
+	public void reset() {
+		win = 0;
+		draw = 0;
+		lose = 0;
 	}
 
 }
