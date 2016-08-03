@@ -37,8 +37,9 @@ public class MouseEventHandler extends MouseAdapter {
 	    	return;
 	    if(map.getXY(y, x)==map.getBlack()||map.getXY(y, x)==map.getWhite())
 	    	return;
-	    
-	    System.out.println(x+" "+y);
+	    System.out.println(arg0.getX());
+	    System.out.println(arg0.getY());
+	    //System.out.println(x+" "+y);
 	    map.setMap(y, x);
 
 	    //map.changeCheck();
