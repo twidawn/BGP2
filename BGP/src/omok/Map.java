@@ -1,6 +1,6 @@
 package omok;
 
-
+import java.io.PrintWriter;
 
 public class Map{
 	short[][] map;
@@ -8,6 +8,12 @@ public class Map{
 	final short WHITE=-1;
 	public boolean checkBNW=true;
 	public Map mp;
+	private PrintWriter pw;
+	
+	public void setPW(PrintWriter pw){
+		if(this.pw ==null)
+			this.pw = pw;
+	}
 	
 	MapSize ms;
 	public Map(MapSize ms){
@@ -19,10 +25,6 @@ public class Map{
 
 		System.out.println("map");
 	}
-	public Map(int sIZE, int sIZE2) {
-		// TODO Auto-generated constructor stub
-	}
-	
 	public void init(){
 		map=new short[ms.getSize()][];
 		for(int i=0;i<map.length;i++)
@@ -47,21 +49,38 @@ public class Map{
 		else
 			checkBNW=true;
 	}
-	public void setMap(int y,int x) {
-		if(checkBNW)
+	public void setMap(int y,int x, int a) {
+		/*if(checkBNW)
 			map[y][x]=BLACK;
 		else
-			map[y][x]=WHITE;
+			map[y][x]=WHITE;*/
+		if(a==1){
+			if(checkBNW)
+				map[y][x]=BLACK;
+			else
+				map[y][x]=WHITE;
+			pw.println("[STONE]"+ y + " " + x);
+			pw.println("[ENDTN]");
+		}
+		if(a==2){
+			if(checkBNW)
+				map[y][x]=WHITE;
+			else
+				map[y][x]=BLACK;
+		}
+		
 	}
 	public boolean winCheck(int x,int y){
 		if(winCheckL(x, y)||winCheckLD(x, y)||winCheckLU(x, y)||winCheckR(x, y)
 		||winCheckRD(x, y)||winCheckRU(x, y)||winCheckUp(x, y)||winCheckDown(x, y)
 		||winCheckOneDown(x, y)||winCheckOneL(x, y)||winCheckOneLD(x, y)||winCheckOneLU(x, y)
 		||winCheckOneR(x, y)||winCheckOneRD(x, y)||winCheckOneUp(x, y)||winCheckOneRU(x, y)
-		||winCheckCenterLU(x, y)||winCheckCenterRL(x, y)||winCheckCenterRU(x, y)||winCheckCenterUD(x, y))
+		||winCheckCenterLU(x, y)||winCheckCenterRL(x, y)||winCheckCenterRU(x, y)||winCheckCenterUD(x, y)){
+			pw.println("[MYWIN]");
 			return true;
-		else
-			return false;
+		}
+
+		return false;
 	}
 	
 	//

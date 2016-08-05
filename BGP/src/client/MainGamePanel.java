@@ -2,6 +2,9 @@ package client;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.PrintWriter;
@@ -26,8 +29,9 @@ public class MainGamePanel extends JPanel implements KeyListener{
 	GameControl gc;
 	Tile tile;
 	DrawBorad omokDb;
-	JLabel turnNotice;
+	JLabel turnNotice, othelloLogo;
 	PrintWriter pw;
+	Image background;
 
 	Font font1 = new Font("Serif", Font.ITALIC, 50);
 	protected static JLabel turnImage;
@@ -38,8 +42,11 @@ public class MainGamePanel extends JPanel implements KeyListener{
 	
 	public MainGamePanel() {
 		setLayout(null);
-		setBackground(Color.white);
-		setBackground(Color.LIGHT_GRAY);
+		
+		background=Toolkit.getDefaultToolkit().getImage("image\\후보4.jpg");
+		
+		//setBackground(Color.white);
+		//setBackground(Color.LIGHT_GRAY);
 
 		megPanel = new JPanel();
 		megPanel.setBounds(930, 0, 350, 900);
@@ -53,9 +60,9 @@ public class MainGamePanel extends JPanel implements KeyListener{
 		logMsg.setEnabled(false);
 
 		sendMsg = new JTextField();
-		sendMsg.setBounds(0, 510, 250, 35);
+		sendMsg.setBounds(0, 500, 260, 35);
 		send = new JButton("전 송");
-		send.setBounds(260, 510, 85, 35);
+		send.setBounds(260, 500, 90, 35);
 
 		megPanel.add(scrollPane);
 		megPanel.add(sendMsg);
@@ -69,24 +76,30 @@ public class MainGamePanel extends JPanel implements KeyListener{
 		turnNotice = new JLabel("Turn");
 		turnNotice.setFont(font1);
 
-		turnImage.setBounds(50, 600, 200, 200);
-		turnNotice.setBounds(100, 700, 200, 200);
+		turnImage.setBounds(75, 545, 200, 200);
+	    turnNotice.setBounds(70, 650, 250, 200);
 
 		megPanel.add(turnImage);
 		megPanel.add(turnNotice);
+		
+		othelloLogo=new JLabel(new ImageIcon("image\\vv3.png"));		
+		add(othelloLogo);
+		othelloLogo.setBounds(-105, 530, 560, 345);
+		megPanel.add(othelloLogo);
+		
 	}
 
 	public void setOthello(GameControl gc) {
 		tile = new Tile(gc);
 		add(tile);
-		tile.setBounds(20, 20, 800, 800);
+		tile.setBounds(60, 30, 800, 800);
 		// this.gc = gc;
 		gc.gameStatus(tile);
 	}
 	
 	public void setOmok(MapSize ms, Map omokMap) {
 		omokDb = new DrawBorad(ms, omokMap);
-		omokDb.setBounds(20,20,800,800);
+		omokDb.setBounds(60,30,800,800);
 		add(omokDb);
 		addMouseListener(new MouseEventHandler(omokMap, ms, omokDb));
 	}
@@ -126,6 +139,11 @@ public class MainGamePanel extends JPanel implements KeyListener{
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		g.drawImage(background, 0, 0, getWidth(), getHeight() ,this);
 	}
 
 	
